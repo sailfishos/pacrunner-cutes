@@ -50,9 +50,15 @@ extern "C" {
 #include <iostream>
 
 #define CERR()  std::cerr << __PRETTY_FUNCTION__
+#ifdef DEBUG
+#define DBG() CERR() << std::endl;
+#else
+#define DBG() CERR()
+#endif
 
-const char *pacrunner_proxy_get_script(struct pacrunner_proxy *proxy);
-const char *pacrunner_proxy_get_interface(struct pacrunner_proxy *proxy);
+// TODO it should be in pacrunner public headers
+extern "C" const char *pacrunner_proxy_get_script(struct pacrunner_proxy *proxy);
+extern "C" const char *pacrunner_proxy_get_interface(struct pacrunner_proxy *proxy);
 
 using cutes::Env;
 class Engine : public QObject
@@ -95,14 +101,15 @@ private:
     QJSValue find_proxy_;
 };
 
-int Engine::argc_ = 0;
-char* Engine::argv_[] = {nullptr};
+int Engine::argc_ = 1;
+char* Engine::argv_[] = {"test"};
 std::mutex Engine::mutex_;
 struct pacrunner_proxy *Engine::current_proxy_ = nullptr;
 std::unique_ptr<Engine> Engine::instance_;
 
 std::unique_ptr<QJSEngine> Engine::mk_engine()
 {
+    DBG();
     app_ = QCoreApplication::instance();
     if (!app_) {
         app_ = new QCoreApplication(argc_, argv_);
@@ -115,6 +122,7 @@ std::unique_ptr<QJSEngine> Engine::mk_engine()
 
 void Engine::create_object()
 {
+    DBG();
     if (instance_)
         return;
 
@@ -134,6 +142,7 @@ void Engine::create_object()
 
 void Engine::mk_find_proxy(char const *pac)
 {
+    DBG();
     QFile js_file(PACRUNNER_JS_FILE);
     if (!js_file.open(QIODevice::ReadOnly)) {
         qWarning() << "Can't open " << PACRUNNER_JS_FILE;
@@ -161,6 +170,7 @@ void Engine::mk_find_proxy(char const *pac)
 
 static int getaddr(const char *node, char *host, size_t hostlen)
 {
+    DBG();
 	struct sockaddr_in addr;
 	struct ifreq ifr;
 	int sk, err;
@@ -187,6 +197,7 @@ static int getaddr(const char *node, char *host, size_t hostlen)
 
 static int resolve(const char *node, char *host, size_t hostlen)
 {
+    DBG();
 	struct addrinfo *info;
 	int err;
 
@@ -206,6 +217,7 @@ static int resolve(const char *node, char *host, size_t hostlen)
 
 QString Engine::myIpAddress()
 {
+    DBG();
 	const char *interface;
 	char address[NI_MAXHOST];
 
@@ -246,6 +258,7 @@ QString Engine::dnsResolve(const QString &host)
 
 int Engine::set_proxy(struct pacrunner_proxy *proxy)
 {
+    DBG();
     try {
         std::lock_guard<std::mutex> lock_(mutex_);
         if (current_proxy_)
@@ -261,6 +274,7 @@ int Engine::set_proxy(struct pacrunner_proxy *proxy)
 
 QString Engine::find_proxy(const char *url, const char *host)
 {
+    DBG();
 	if (!find_proxy_.isCallable()) {
         qWarning() << "FindProxyForUrl is not resolved";
 		return QString();
@@ -286,6 +300,7 @@ QString Engine::find_proxy(const char *url, const char *host)
 
 char * Engine::execute(const char *url, const char *host)
 {
+    DBG();
     try {
         std::lock_guard<std::mutex> lock_(mutex_);
         if (!instance_)
@@ -311,11 +326,13 @@ static struct pacrunner_js_driver cutes_driver = {
 
 static int cutes_init(void)
 {
+    DBG();
 	return pacrunner_js_driver_register(&cutes_driver);
 }
 
 static void cutes_exit(void)
 {
+    DBG();
 	pacrunner_js_driver_unregister(&cutes_driver);
     Engine::set_proxy(nullptr);
 }

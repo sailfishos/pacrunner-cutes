@@ -24,12 +24,14 @@ set(CMAKE_CXX_FLAGS
   )
 
 pkg_check_modules(COR cor REQUIRED)
+pkg_check_modules(TUT tut REQUIRED)
 pkg_check_modules(CUTES cutes REQUIRED)
 pkg_check_modules(PACRUNNER pacrunner-1.0 REQUIRED)
 pkg_check_modules(GLIB glib-2.0)
 
 include_directories(
   ${COR_INCLUDE_DIRS}
+  ${TUT_INCLUDE_DIRS}
   ${CUTES_INCLUDE_DIRS}
   ${PACRUNNER_INCLUDE_DIRS}
   ${GLIB_INCLUDE_DIRS}
@@ -37,6 +39,7 @@ include_directories(
 
 link_directories(
   ${COR_LIBRARY_DIRS}
+  ${TUT_LIBRARY_DIRS}
   ${CUTES_LIBRARY_DIRS}
   ${PACRUNNER_LIBRARY_DIRS}
   ${GLIB_LIBRARY_DIRS}

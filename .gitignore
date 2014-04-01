@@ -16,3 +16,5 @@ doc/doxygen
 *.*_parameters
 \#*\#
 src/config.hpp
+src/test_pacrunner_cutes
+src/tests.xml

@@ -13,10 +13,19 @@ BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5Qml)
 BuildRequires: pkgconfig(cor) >= 0.1.6
 BuildRequires: pkgconfig(glib-2.0)
+BuildRequires: pkgconfig(tut) >= 0.0.1
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 %description
 %{summary}
+
+%package tests
+Summary:    Tests for pacrunner-cutes
+License:    GPLv2.1
+Group:      System Environment/Libraries
+Requires:   %{name} = %{version}-%{release}
+%description tests
+%summary
 
 %prep
 %setup -q
@@ -36,3 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/pacrunner/plugins/libpacrunner-cutes.so
 %{_datadir}/pacrunner/pacrunner.js
+
+%files tests
+%defattr(-,root,root,-)
+/opt/tests/pacrunner-cutes/*

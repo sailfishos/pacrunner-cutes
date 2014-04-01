@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testdefinition version="1.0">
+   <suite name="pacrunner-cutes-tests" domain="system">
+       <description>Pacrunner cutes automatic tests</description>
+       <set name="unit-tests" feature="Pacrunner-cutes PAC files processing tests">
+           <description>Pacrunner-cutes registration, PAC files processing</description>
+           <case manual="false" name="unittests">
+               <step>cd @TESTS_DIR@ &amp;&amp; LD_LIBRARY_PATH=@prefix@/@DST_LIB@/pacrunner/plugins ./test_pacrunner_cutes</step>
+           </case>
+       </set>
+   </suite>
+</testdefinition>
