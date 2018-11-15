@@ -69,7 +69,7 @@ static struct pacrunner_proxy proxy_direct = {
     0, "lo"
 };
 static struct pacrunner_proxy proxy_example = {
-    1, "rmnet0"
+    1, "wlan0"
 };
 static struct pacrunner_proxy proxy_example_direct = {
     1, "lo"
