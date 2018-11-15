@@ -10,8 +10,6 @@ add_library(pacrunner-cutes SHARED
 qt5_use_modules(pacrunner-cutes Core Qml)
 
 target_link_libraries(pacrunner-cutes
-  ${COR_LIBRARIES}
-  ${CUTES_LIBRARIES}
   ${PACRUNNER_LIBRARIES}
   ${GLIB_LIBRARIES}
   )
