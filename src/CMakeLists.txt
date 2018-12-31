@@ -6,6 +6,9 @@ configure_file(config.hpp.in config.hpp @ONLY)
 add_library(pacrunner-cutes SHARED
   pacrunner.cpp
 )
+# Prevent cmake adding 'lib' to the front of the filename, since pacrunner
+# filters out any plugins with this prefix.
+set_target_properties(pacrunner-cutes PROPERTIES PREFIX "")
 
 qt5_use_modules(pacrunner-cutes Core Qml)
 

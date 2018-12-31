@@ -36,7 +36,7 @@ make install DESTDIR=%{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_libdir}/pacrunner/plugins/libpacrunner-cutes.so
+%{_libdir}/pacrunner/plugins/pacrunner-cutes.so
 %{_datadir}/pacrunner/pacrunner.js
 
 %files tests

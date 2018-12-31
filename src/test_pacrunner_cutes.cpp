@@ -111,7 +111,7 @@ extern struct pacrunner_plugin_desc pacrunner_plugin_desc;
 // void load()
 // {
 //     //-Bsymbolic
-//     lib_h = dlopen("libpacrunner-cutes.so", RTLD_LAZY);
+//     lib_h = dlopen("pacrunner-cutes.so", RTLD_LAZY);
 //     if (!lib_h)
 //         std::cerr << dlerror() << std::endl;
 // }
