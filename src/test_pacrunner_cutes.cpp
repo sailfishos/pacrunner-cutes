@@ -69,7 +69,7 @@ static struct pacrunner_proxy proxy_direct = {
     0, "lo"
 };
 static struct pacrunner_proxy proxy_example = {
-    1, "rmnet0"
+    1, "wlan0"
 };
 static struct pacrunner_proxy proxy_example_direct = {
     1, "lo"
@@ -111,7 +111,7 @@ extern struct pacrunner_plugin_desc pacrunner_plugin_desc;
 // void load()
 // {
 //     //-Bsymbolic
-//     lib_h = dlopen("libpacrunner-cutes.so", RTLD_LAZY);
+//     lib_h = dlopen("pacrunner-cutes.so", RTLD_LAZY);
 //     if (!lib_h)
 //         std::cerr << dlerror() << std::endl;
 // }

@@ -1,17 +1,15 @@
-Summary: Pacrunner javascript plugin using cutes
+Summary: Pacrunner javascript plugin using QJsEngine
 Name: pacrunner-cutes
 Version: 0.0.1
 Release: 1
 License: GPLv2
 Group: Development/Liraries
-URL: https://github.com/nemomobile/pacrunner-cutes
+URL: https://git.merproject.org/mer-core/pacrunner-cutes
 Source0: %{name}-%{version}.tar.bz2
 BuildRequires: cmake >= 2.8
 BuildRequires: pkgconfig(pacrunner-1.0)
-BuildRequires: pkgconfig(cutes)
 BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5Qml)
-BuildRequires: pkgconfig(cor) >= 0.1.6
 BuildRequires: pkgconfig(glib-2.0)
 BuildRequires: pkgconfig(tut) >= 0.0.1
 %description
@@ -38,7 +36,7 @@ make install DESTDIR=%{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{_libdir}/pacrunner/plugins/libpacrunner-cutes.so
+%{_libdir}/pacrunner/plugins/pacrunner-cutes.so
 %{_datadir}/pacrunner/pacrunner.js
 
 %files tests

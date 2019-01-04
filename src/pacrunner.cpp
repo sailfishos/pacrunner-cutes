@@ -20,9 +20,6 @@
  *
  */
 
-#include <cutes/env.hpp>
-#include <cor/util.hpp>
-
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
@@ -40,6 +37,8 @@ extern "C" {
 
 #include "config.hpp"
 
+#include <QJSEngine>
+
 #include <QQmlEngine>
 #include <QFile>
 #include <QCoreApplication>
@@ -56,23 +55,30 @@ extern "C" {
 #define DBG() CERR()
 #endif
 
+#define PLUGIN_NAME "cutes"
+
 // TODO it should be in pacrunner public headers
 extern "C" const char *pacrunner_proxy_get_script(struct pacrunner_proxy *proxy);
 extern "C" const char *pacrunner_proxy_get_interface(struct pacrunner_proxy *proxy);
 
-using cutes::Env;
+template <typename T, typename ... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
+
 class Engine : public QObject
 {
     Q_OBJECT
 public:
     Engine()
         : engine_(mk_engine())
-        , env_(new Env(engine_.get(), app_, engine_.get()))
     {
         auto functions_ = engine_->newQObject(this);
         QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
-        env_->addGlobal("myIpAddress", functions_.property("myIpAddress"));
-        env_->addGlobal("dnsResolve", functions_.property("dnsResolve"));
+        engine_->globalObject().setProperty("myIpAddress", functions_.property("myIpAddress"));
+        engine_->globalObject().setProperty("dnsResolve", functions_.property("dnsResolve"));
     }
 
     Q_INVOKABLE QString myIpAddress();
@@ -97,12 +103,11 @@ private:
     std::list<std::function<void()> > on_delete_;
     QCoreApplication *app_;
     std::unique_ptr<QJSEngine> engine_;
-    std::unique_ptr<Env> env_;
     QJSValue find_proxy_;
 };
 
 int Engine::argc_ = 1;
-char* Engine::argv_[] = {"test"};
+char* Engine::argv_[] = {NULL};
 std::mutex Engine::mutex_;
 struct pacrunner_proxy *Engine::current_proxy_ = nullptr;
 std::unique_ptr<Engine> Engine::instance_;
@@ -112,12 +117,14 @@ std::unique_ptr<QJSEngine> Engine::mk_engine()
     DBG();
     app_ = QCoreApplication::instance();
     if (!app_) {
+        argv_[0] = strdup(PLUGIN_NAME);
         app_ = new QCoreApplication(argc_, argv_);
         on_delete_.push_back([this]() {
+                free(argv_[0]);
                 delete app_;
             });
     }
-    return cor::make_unique<QJSEngine>();
+    return make_unique<QJSEngine>();
 }
 
 void Engine::create_object()
@@ -136,7 +143,7 @@ void Engine::create_object()
 	}
 
     if (!instance_)
-        instance_ = cor::make_unique<Engine>();
+        instance_ = make_unique<Engine>();
     instance_->mk_find_proxy(pac);
 }
 
@@ -150,19 +157,19 @@ void Engine::mk_find_proxy(char const *pac)
     }
     QString code(js_file.readAll());
     js_file.close();
-	auto script_scr = env_->eval(code);
+	auto script_scr = engine_->evaluate(code);
 	if (script_scr.isError()) {
 		qWarning() << "Javascript failed to compile: " << script_scr.toString();
 		return;
 	}
 
-	script_scr = env_->eval(pac);
+	script_scr = engine_->evaluate(pac);
 	if (script_scr.isError()) {
 		qWarning() << "PAC script failed to compile: " << script_scr.toString();
 		return;
 	}
 
-	auto const &globals = env_->globals();
+	auto const &globals = engine_->globalObject();
     find_proxy_ = globals.property("FindProxyForURL");
     if (!find_proxy_.isCallable())
 		qWarning() << "FindProxyForUrl is not a function";
@@ -318,7 +325,7 @@ char * Engine::execute(const char *url, const char *host)
 }
 
 static struct pacrunner_js_driver cutes_driver = {
-	"cutes",
+	PLUGIN_NAME,
 	PACRUNNER_JS_PRIORITY_HIGH,
 	&Engine::set_proxy,
 	&Engine::execute,
