@@ -10,6 +10,7 @@ BuildRequires: cmake >= 2.8
 BuildRequires: pkgconfig(pacrunner-1.0)
 BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5Qml)
+BuildRequires: pkgconfig(Qt5Quick)
 BuildRequires: pkgconfig(glib-2.0)
 BuildRequires: pkgconfig(tut) >= 0.0.1
 %description
